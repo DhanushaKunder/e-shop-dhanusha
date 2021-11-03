@@ -10,6 +10,8 @@ const orderRoute = require("./routes/order");
 const stripeRoute = require("./routes/stripe");
 const cors = require("cors");
 
+const path = require('path')
+
 dotenv.config();
 
 mongoose
@@ -28,6 +30,18 @@ app.use("/api/carts", cartRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/checkout", stripeRoute);
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log("Backend server is running!");
+// const PORT= process.env.PORT;
+
+// app.use(express.static(path.join(__dirname, "/client/build")));
+
+if(process.env.NODE_ENV === 'production'){
+  app.use('/static', express.static(path.join(__dirname, 'client/build')));
+}
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/client/build', 'index.html'));
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env );
 });
